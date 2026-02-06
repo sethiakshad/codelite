@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const mongoose = require('mongoose');
 const { connectMongo } = require('./db');
 const User = require('./models/User');
 const Food = require('./models/Food');
@@ -14,15 +15,27 @@ app.use(cors({
 }));
 app.use(express.json());
 
-// Log all incoming requests for debugging in Vercel Logs
-app.use((req, res, next) => {
-    console.log(`${req.method} ${req.url}`);
-    next();
-});
-
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+
+// Connect to MongoDB immediately
+connectMongo();
+
+// Log all incoming requests for debugging in Vercel Logs
+app.use((req, res, next) => {
+    console.log(`${req.method} ${req.url}`);
+    // Ensure DB is connected before proceeding
+    if (mongoose.connection.readyState !== 1) {
+        console.log('DB not connected, attempting to reconnect...');
+        connectMongo().then(() => next()).catch(err => {
+            console.error('Reconnection failed:', err);
+            res.status(500).json({ error: 'Database connection failed' });
+        });
+    } else {
+        next();
+    }
+});
 
 // Note: Disk storage won't work on Vercel's read-only filesystem.
 // For production, use Cloudinary or Vercel Blob. 
