@@ -1,28 +1,33 @@
-const { DataTypes } = require('sequelize');
-const { sequelize } = require('../db');
+const mongoose = require('mongoose');
 
-const User = sequelize.define('User', {
+const UserSchema = new mongoose.Schema({
     username: {
-        type: DataTypes.STRING,
-        allowNull: false,
+        type: String,
+        required: true,
         unique: true
     },
     password: {
-        type: DataTypes.STRING,
-        allowNull: false
+        type: String,
+        required: true
     },
     role: {
-        type: DataTypes.ENUM('donor', 'ngo', 'admin'),
-        defaultValue: 'donor'
+        type: String,
+        enum: ['donor', 'ngo', 'admin'],
+        default: 'donor'
     },
     certificate: {
-        type: DataTypes.STRING,
-        allowNull: true
+        type: String,
+        required: false
     },
     approvalStatus: {
-        type: DataTypes.ENUM('pending', 'approved', 'rejected'),
-        defaultValue: 'approved' // Admin is auto-approved, others set to pending in registration
+        type: String,
+        enum: ['pending', 'approved', 'rejected'],
+        default: 'approved' // Set to pending in index.js for donors/ngos
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now
     }
 });
 
-module.exports = User;
+module.exports = mongoose.model('User', UserSchema);

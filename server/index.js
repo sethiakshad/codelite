@@ -2,7 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const { connectMongo, connectSQL, sequelize } = require('./db');
+const { connectMongo } = require('./db');
 const User = require('./models/User');
 const Food = require('./models/Food');
 
@@ -89,7 +89,7 @@ app.post('/api/register', upload.single('certificate'), async (req, res) => {
 app.post('/api/login', async (req, res) => {
     try {
         const { username, password } = req.body;
-        const user = await User.findOne({ where: { username } });
+        const user = await User.findOne({ username });
         if (!user || !(await bcrypt.compare(password, user.password))) {
             return res.status(401).json({ error: 'Invalid credentials' });
         }
@@ -102,7 +102,7 @@ app.post('/api/login', async (req, res) => {
             return res.status(403).json({ error: 'Your account has been rejected by admin. Please contact support.' });
         }
 
-        const token = jwt.sign({ id: user.id, username: user.username, role: user.role, approvalStatus: user.approvalStatus }, SECRET_KEY);
+        const token = jwt.sign({ id: user._id, username: user.username, role: user.role, approvalStatus: user.approvalStatus }, SECRET_KEY);
         res.json({ token, username: user.username, role: user.role, approvalStatus: user.approvalStatus });
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -134,10 +134,7 @@ app.get('/api/food/user/:username', async (req, res) => {
 // ADMIN: Get pending users (for approval)
 app.get('/api/admin/users/pending', async (req, res) => {
     try {
-        const users = await User.findAll({
-            where: { approvalStatus: 'pending' },
-            attributes: ['id', 'username', 'role', 'certificate', 'approvalStatus', 'createdAt']
-        });
+        const users = await User.find({ approvalStatus: 'pending' }).select('-password');
         res.json(users);
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -147,9 +144,7 @@ app.get('/api/admin/users/pending', async (req, res) => {
 // ADMIN: Get all users (for management)
 app.get('/api/admin/users', async (req, res) => {
     try {
-        const users = await User.findAll({
-            attributes: ['id', 'username', 'role', 'certificate', 'approvalStatus', 'createdAt']
-        });
+        const users = await User.find().select('-password');
         res.json(users);
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -160,11 +155,10 @@ app.get('/api/admin/users', async (req, res) => {
 app.delete('/api/admin/users/:id', async (req, res) => {
     try {
         const { id } = req.params;
-        const user = await User.findByPk(id);
+        const user = await User.findByIdAndDelete(id);
         if (!user) {
             return res.status(404).json({ error: 'User not found' });
         }
-        await user.destroy();
         res.json({ message: 'User deleted successfully' });
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -178,7 +172,7 @@ app.put('/api/admin/users/:id/:status', async (req, res) => {
         if (!['approved', 'rejected'].includes(status)) {
             return res.status(400).json({ error: 'Invalid status' });
         }
-        const user = await User.findByPk(id);
+        const user = await User.findById(id);
         if (!user) {
             return res.status(404).json({ error: 'User not found' });
         }
@@ -236,11 +230,6 @@ if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {
         // Connect to Databases
         try {
             await connectMongo();
-            await connectSQL();
-
-            // Sync SQL models
-            await sequelize.sync({ alter: true });
-            console.log('SQL Database synced');
         } catch (error) {
             console.error('Initial DB connection failed:', error);
         }

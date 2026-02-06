@@ -66,7 +66,7 @@ const AdminDashboard = () => {
                 alert(`User ${status === 'approved' ? 'Approved' : 'Rejected'}!`);
                 fetchPendingUsers();
                 fetchAllUsers();
-                if (selectedUser && selectedUser.id === id) {
+                if (selectedUser && selectedUser._id === id) {
                     const updatedUser = { ...selectedUser, approvalStatus: status };
                     setSelectedUser(updatedUser);
                 }
@@ -159,7 +159,7 @@ const AdminDashboard = () => {
                         ) : (
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                 {pendingUsers.map((pendingUser) => (
-                                    <div key={pendingUser.id} className="glass-panel" style={{ padding: '1.5rem', textAlign: 'left' }}>
+                                    <div key={pendingUser._id} className="glass-panel" style={{ padding: '1.5rem', textAlign: 'left' }}>
                                         <h3 className="text-lg font-bold text-white mb-2">{pendingUser.username}</h3>
                                         <p style={{ color: 'var(--text-muted)' }} className="mb-1">
                                             <strong>Role:</strong> {pendingUser.role.toUpperCase()}
@@ -169,14 +169,14 @@ const AdminDashboard = () => {
                                         </p>
                                         <div className="flex gap-2">
                                             <button
-                                                onClick={() => handleUserAction(pendingUser.id, 'approved')}
+                                                onClick={() => handleUserAction(pendingUser._id, 'approved')}
                                                 className="btn btn-primary text-sm"
                                                 style={{ flex: 1 }}
                                             >
                                                 Approve
                                             </button>
                                             <button
-                                                onClick={() => handleUserAction(pendingUser.id, 'rejected')}
+                                                onClick={() => handleUserAction(pendingUser._id, 'rejected')}
                                                 className="btn btn-secondary text-sm"
                                                 style={{ flex: 1, background: 'rgba(239,68,68,0.2)', borderColor: 'rgba(239,68,68,0.5)' }}
                                             >
@@ -217,7 +217,7 @@ const AdminDashboard = () => {
                                     </thead>
                                     <tbody>
                                         {allUsers.map((u) => (
-                                            <tr key={u.id} className="glass-panel" style={{ background: 'rgba(255,255,255,0.05)' }}>
+                                            <tr key={u._id} className="glass-panel" style={{ background: 'rgba(255,255,255,0.05)' }}>
                                                 <td style={{ padding: '1rem', borderTopLeftRadius: '10px', borderBottomLeftRadius: '10px' }}>
                                                     <strong>{u.username}</strong>
                                                 </td>
@@ -248,7 +248,7 @@ const AdminDashboard = () => {
                                                             <>
                                                                 {u.approvalStatus === 'approved' ? (
                                                                     <button
-                                                                        onClick={() => handleUserAction(u.id, 'rejected')}
+                                                                        onClick={() => handleUserAction(u._id, 'rejected')}
                                                                         className="btn"
                                                                         style={{ padding: '0.4rem 0.8rem', background: 'rgba(245, 158, 11, 0.2)', color: '#F59E0B', border: '1px solid rgba(245, 158, 11, 0.3)' }}
                                                                     >
@@ -256,7 +256,7 @@ const AdminDashboard = () => {
                                                                     </button>
                                                                 ) : (
                                                                     <button
-                                                                        onClick={() => handleUserAction(u.id, 'approved')}
+                                                                        onClick={() => handleUserAction(u._id, 'approved')}
                                                                         className="btn"
                                                                         style={{ padding: '0.4rem 0.8rem', background: 'rgba(16, 185, 129, 0.2)', color: '#10B981', border: '1px solid rgba(16, 185, 129, 0.3)' }}
                                                                     >
@@ -264,7 +264,7 @@ const AdminDashboard = () => {
                                                                     </button>
                                                                 )}
                                                                 <button
-                                                                    onClick={() => handleDeleteUser(u.id)}
+                                                                    onClick={() => handleDeleteUser(u._id)}
                                                                     className="btn"
                                                                     style={{ padding: '0.4rem 0.8rem', background: 'rgba(239, 68, 68, 0.2)', color: '#EF4444', border: '1px solid rgba(239, 68, 68, 0.3)' }}
                                                                 >
@@ -380,7 +380,7 @@ const AdminDashboard = () => {
                             </div>
                             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
                                 <span style={{ color: 'var(--text-muted)' }}>User ID</span>
-                                <span style={{ color: 'white' }}>#{selectedUser.id}</span>
+                                <span style={{ color: 'white' }}>#{selectedUser._id}</span>
                             </div>
                             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
                                 <span style={{ color: 'var(--text-muted)' }}>Joined On</span>
@@ -408,7 +408,7 @@ const AdminDashboard = () => {
                                 <>
                                     {selectedUser.approvalStatus === 'approved' ? (
                                         <button
-                                            onClick={() => handleUserAction(selectedUser.id, 'rejected')}
+                                            onClick={() => handleUserAction(selectedUser._id, 'rejected')}
                                             className="btn"
                                             style={{ flex: 1, background: 'rgba(245, 158, 11, 0.2)', color: '#F59E0B', border: '1px solid rgba(245, 158, 11, 0.3)' }}
                                         >
@@ -416,7 +416,7 @@ const AdminDashboard = () => {
                                         </button>
                                     ) : (
                                         <button
-                                            onClick={() => handleUserAction(selectedUser.id, 'approved')}
+                                            onClick={() => handleUserAction(selectedUser._id, 'approved')}
                                             className="btn"
                                             style={{ flex: 1, background: 'rgba(16, 185, 129, 0.2)', color: '#10B981', border: '1px solid rgba(16, 185, 129, 0.3)' }}
                                         >
@@ -424,7 +424,7 @@ const AdminDashboard = () => {
                                         </button>
                                     )}
                                     <button
-                                        onClick={() => handleDeleteUser(selectedUser.id)}
+                                        onClick={() => handleDeleteUser(selectedUser._id)}
                                         className="btn"
                                         style={{ flex: 1, background: 'rgba(239, 68, 68, 0.2)', color: '#EF4444', border: '1px solid rgba(239, 68, 68, 0.3)' }}
                                     >
