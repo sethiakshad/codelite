@@ -22,8 +22,19 @@ const Login = () => {
                 localStorage.setItem('token', data.token);
                 localStorage.setItem('role', data.role);
                 localStorage.setItem('username', data.username);
+
+                // Notify other components (like Navbar) of auth change
+                window.dispatchEvent(new Event('auth-change'));
+
                 alert('Login Successful!');
-                navigate('/');
+
+                if (data.role === 'donor') {
+                    navigate('/donor-dashboard');
+                } else if (data.role === 'ngo') {
+                    navigate('/ngo-dashboard');
+                } else {
+                    navigate('/');
+                }
             } else {
                 alert(data.error);
             }

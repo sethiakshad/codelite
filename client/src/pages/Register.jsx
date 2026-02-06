@@ -36,13 +36,15 @@ const Register = () => {
                 localStorage.setItem('role', data.role);
                 localStorage.setItem('username', data.username);
 
+                // Notify other components (like Navbar) of auth change
+                window.dispatchEvent(new Event('auth-change'));
+
                 alert('Registration Successful!');
 
                 if (data.role === 'donor') {
                     navigate('/donor-dashboard');
                 } else if (data.role === 'ngo') {
-                    // Placeholder for NGO dashboard
-                    navigate('/'); // Or navigate('/ngo-dashboard') if implemented
+                    navigate('/ngo-dashboard');
                 } else {
                     navigate('/');
                 }

@@ -4,14 +4,53 @@ import { Link, useNavigate } from 'react-router-dom';
 const Navbar = () => {
     const [scrolled, setScrolled] = useState(false);
     const navigate = useNavigate();
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [userRole, setUserRole] = useState(null);
 
     useEffect(() => {
         const handleScroll = () => {
             setScrolled(window.scrollY > 50);
         };
+
+        // Check login status on mount and when interactions happen
+        const checkLoginStatus = () => {
+            const token = localStorage.getItem('token');
+            const role = localStorage.getItem('role');
+            setIsLoggedIn(!!token);
+            setUserRole(role);
+        };
+
+        checkLoginStatus();
         window.addEventListener('scroll', handleScroll);
-        return () => window.removeEventListener('scroll', handleScroll);
+
+        // Listen for storage events (in case of tab changes) or custom events
+        window.addEventListener('storage', checkLoginStatus);
+
+        // Optional: Custom event for immediate UI updates within same tab
+        window.addEventListener('auth-change', checkLoginStatus);
+
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+            window.removeEventListener('storage', checkLoginStatus);
+            window.removeEventListener('auth-change', checkLoginStatus);
+        };
     }, []);
+
+    const handleLogout = () => {
+        localStorage.clear();
+        window.dispatchEvent(new Event('auth-change')); // Trigger update
+        navigate('/');
+    };
+
+    const handleDashboardClick = () => {
+        if (userRole === 'donor') {
+            navigate('/donor-dashboard');
+        } else if (userRole === 'ngo') {
+            navigate('/ngo-dashboard');
+        } else {
+            navigate('/');
+        }
+    };
 
     return (
         <nav
@@ -40,8 +79,17 @@ const Navbar = () => {
                 </ul>
 
                 <div className="flex gap-4">
-                    <button onClick={() => navigate('/login')} className="btn btn-secondary">Log In</button>
-                    <button onClick={() => navigate('/register')} className="btn btn-primary">Join Now</button>
+                    {isLoggedIn ? (
+                        <>
+                            <button onClick={handleDashboardClick} className="btn btn-secondary">Dashboard</button>
+                            <button onClick={handleLogout} className="btn btn-primary" style={{ background: 'rgba(239, 68, 68, 0.8)', borderColor: 'transparent' }}>Log Out</button>
+                        </>
+                    ) : (
+                        <>
+                            <button onClick={() => navigate('/login')} className="btn btn-secondary">Log In</button>
+                            <button onClick={() => navigate('/register')} className="btn btn-primary">Join Now</button>
+                        </>
+                    )}
                 </div>
             </div>
         </nav>

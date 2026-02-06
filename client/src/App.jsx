@@ -15,6 +15,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Donate from './pages/Donate';
 import DonorDashboard from './pages/DonorDashboard';
+import NGODashboard from './pages/NGODashboard';
 
 // Landing Page Component
 const Home = () => (
@@ -40,6 +41,7 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/donate" element={<Donate />} />
           <Route path="/donor-dashboard" element={<DonorDashboard />} />
+          <Route path="/ngo-dashboard" element={<NGODashboard />} />
         </Routes>
         <Footer />
       </div>
