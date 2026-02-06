@@ -1,4 +1,4 @@
 // API configuration
-const API_URL = import.meta.env.VITE_API_URL || 'https://aaharbandhoo-git-main-sethiakshads-projects.vercel.app';
+const API_URL = import.meta.env.VITE_API_URL || 'https://aaharbandhoo.vercel.app';
 
 export default API_URL;

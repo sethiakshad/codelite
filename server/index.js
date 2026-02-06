@@ -36,7 +36,18 @@ app.use('/uploads', express.static('uploads'));
 const SECRET_KEY = 'supersecretkey'; // In real app use .env
 
 app.get('/', (req, res) => {
-    res.send('FoodLink API Server is running!');
+    res.json({
+        message: 'FoodLink API Server is running!',
+        dbStatus: mongoose.connection.readyState === 1 ? 'Connected' : 'Disconnected'
+    });
+});
+
+app.get('/api/health', (req, res) => {
+    res.json({
+        status: 'UP',
+        database: mongoose.connection.readyState === 1 ? 'Connected' : 'Disconnected',
+        environment: process.env.NODE_ENV || 'development'
+    });
 });
 
 // --- AUTH (SQL) ---
