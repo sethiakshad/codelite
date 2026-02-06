@@ -14,6 +14,7 @@ import Footer from './components/Footer';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Donate from './pages/Donate';
+import DonorDashboard from './pages/DonorDashboard';
 
 // Landing Page Component
 const Home = () => (
@@ -38,6 +39,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/donate" element={<Donate />} />
+          <Route path="/donor-dashboard" element={<DonorDashboard />} />
         </Routes>
         <Footer />
       </div>

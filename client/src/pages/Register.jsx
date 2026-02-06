@@ -31,8 +31,21 @@ const Register = () => {
             });
             const data = await response.json();
             if (response.ok) {
-                alert('Registration Successful! Please Login.');
-                navigate('/login');
+                // Auto-login logic
+                localStorage.setItem('token', data.token);
+                localStorage.setItem('role', data.role);
+                localStorage.setItem('username', data.username);
+
+                alert('Registration Successful!');
+
+                if (data.role === 'donor') {
+                    navigate('/donor-dashboard');
+                } else if (data.role === 'ngo') {
+                    // Placeholder for NGO dashboard
+                    navigate('/'); // Or navigate('/ngo-dashboard') if implemented
+                } else {
+                    navigate('/');
+                }
             } else {
                 alert(data.error);
             }
