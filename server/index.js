@@ -12,6 +12,10 @@ app.use(express.json());
 
 const SECRET_KEY = 'supersecretkey'; // In real app use .env
 
+app.get('/', (req, res) => {
+    res.send('FoodLink API Server is running!');
+});
+
 // --- AUTH (SQL) ---
 app.post('/api/register', async (req, res) => {
     try {

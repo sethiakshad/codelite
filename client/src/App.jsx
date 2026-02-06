@@ -30,22 +30,26 @@ const Home = () => (
   </>
 );
 
+import { AuthProvider } from './context/AuthContext';
+
 function App() {
   return (
-    <Router>
-      <div className="App">
-        <Navbar />
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/donate" element={<Donate />} />
-          <Route path="/donor-dashboard" element={<DonorDashboard />} />
-          <Route path="/ngo-dashboard" element={<NGODashboard />} />
-        </Routes>
-        <Footer />
-      </div>
-    </Router>
+    <AuthProvider>
+      <Router>
+        <div className="App">
+          <Navbar />
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/donate" element={<Donate />} />
+            <Route path="/donor-dashboard" element={<DonorDashboard />} />
+            <Route path="/ngo-dashboard" element={<NGODashboard />} />
+          </Routes>
+          <Footer />
+        </div>
+      </Router>
+    </AuthProvider>
   );
 }
 

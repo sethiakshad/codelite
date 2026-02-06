@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 const Register = () => {
     const location = useLocation();
     const navigate = useNavigate();
+    const { login } = useAuth();
     const searchParams = new URLSearchParams(location.search);
     const initialRole = searchParams.get('role') || 'donor';
 
@@ -12,6 +14,7 @@ const Register = () => {
         password: '',
         role: initialRole
     });
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     useEffect(() => {
         setFormData(prev => ({ ...prev, role: initialRole }));
@@ -23,21 +26,21 @@ const Register = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setIsSubmitting(true);
         try {
-            const response = await fetch('http://localhost:5000/api/register', {
+            const response = await fetch('http://127.0.0.1:5000/api/register', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData),
             });
             const data = await response.json();
             if (response.ok) {
-                // Auto-login logic
-                localStorage.setItem('token', data.token);
-                localStorage.setItem('role', data.role);
-                localStorage.setItem('username', data.username);
-
-                // Notify other components (like Navbar) of auth change
-                window.dispatchEvent(new Event('auth-change'));
+                // Auto-login via Context
+                login({
+                    token: data.token,
+                    role: data.role,
+                    username: data.username
+                });
 
                 alert('Registration Successful!');
 
@@ -49,10 +52,18 @@ const Register = () => {
                     navigate('/');
                 }
             } else {
-                alert(data.error);
+                // Handle duplicate username or other errors
+                if (data.error && data.error.includes('Validation error')) {
+                    alert('Username already taken. Please choose another.');
+                } else {
+                    alert(data.error || 'Registration failed. Please try again.');
+                }
             }
         } catch (error) {
             console.error('Registration error:', error);
+            alert('A network error occurred. Please check your connection.');
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -116,7 +127,9 @@ const Register = () => {
                             required
                         />
                     </div>
-                    <button type="submit" className="btn btn-primary w-full" style={{ marginTop: '1rem' }}>Register</button>
+                    <button type="submit" className="btn btn-primary w-full" style={{ marginTop: '1rem' }} disabled={isSubmitting}>
+                        {isSubmitting ? 'Registering...' : 'Register'}
+                    </button>
                 </form>
                 <p className="text-center" style={{ marginTop: '1.5rem', color: 'var(--text-muted)' }}>
                     Already have an account? <Link to="/login" style={{ color: 'var(--primary)' }}>Log In</Link>
