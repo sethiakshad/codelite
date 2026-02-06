@@ -89,7 +89,7 @@ app.post('/api/login', async (req, res) => {
 app.get('/api/food', async (req, res) => {
     try {
         // Fetch all food
-        const foods = await Food.find().sort({ createdAt: -1 });
+        const foods = await Food.find({ status: 'available' }).sort({ createdAt: -1 });
         res.json(foods);
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -107,9 +107,31 @@ app.get('/api/food/user/:username', async (req, res) => {
     }
 });
 
+// ADMIN: Get pending food
+app.get('/api/admin/food/pending', async (req, res) => {
+    try {
+        const foods = await Food.find({ status: 'pending' }).sort({ createdAt: -1 });
+        res.json(foods);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// ADMIN: Approve/Reject food
+app.put('/api/admin/food/:id/:status', async (req, res) => {
+    try {
+        const { id, status } = req.params;
+        const food = await Food.findByIdAndUpdate(id, { status }, { new: true });
+        res.json(food);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+});
+
 app.post('/api/food', async (req, res) => {
     try {
         // In a real app, verify token middleware would go here
+        // Default status is pending from schema
         const food = new Food(req.body);
         await food.save();
         res.status(201).json(food);

@@ -59,7 +59,11 @@ const Navbar = () => {
                 <div className="flex gap-4">
                     {user ? (
                         <>
-                            <button onClick={handleDashboardClick} className="btn btn-secondary">Dashboard</button>
+                            {user.role === 'admin' ? (
+                                <button onClick={() => navigate('/admin-dashboard')} className="btn btn-secondary">Admin Panel</button>
+                            ) : (
+                                <button onClick={handleDashboardClick} className="btn btn-secondary">Dashboard</button>
+                            )}
                             <button onClick={handleLogout} className="btn btn-primary" style={{ background: 'rgba(239, 68, 68, 0.8)', borderColor: 'transparent' }}>Log Out</button>
                         </>
                     ) : (

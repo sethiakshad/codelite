@@ -93,22 +93,44 @@ const DonorDashboard = () => {
                                     <th style={{ textAlign: 'left', padding: '1rem' }}>Title</th>
                                     <th style={{ textAlign: 'left', padding: '1rem' }}>Quantity</th>
                                     <th style={{ textAlign: 'left', padding: '1rem' }}>Date</th>
+                                    <th style={{ textAlign: 'left', padding: '1rem' }}>Donation Details</th>
                                     <th style={{ textAlign: 'left', padding: '1rem' }}>Status</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {donations.map((donation) => (
                                     <tr key={donation._id} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-                                        <td style={{ padding: '1rem' }}>{donation.title}</td>
-                                        <td style={{ padding: '1rem' }}>{donation.quantity}</td>
-                                        <td style={{ padding: '1rem' }}>{new Date(donation.createdAt).toLocaleDateString()}</td>
+                                        <td style={{ padding: '1rem' }}>
+                                            <div>
+                                                <h3 className="text-lg font-bold text-white mb-2">{donation.title}</h3>
+                                                {donation.ingredients && donation.ingredients.length > 0 && (
+                                                    <div className="grid gap-2 mb-2">
+                                                        {donation.ingredients.map((ing, i) => (
+                                                            <div key={i} className="flex flex-wrap gap-2 items-center" style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>
+                                                                <span className="text-white">• {ing.name}</span>
+                                                                <span style={{ opacity: 0.7 }}>({ing.quantity})</span>
+                                                                <span style={{ fontSize: '0.75rem', color: ing.isVeg === 'Veg' ? '#10b981' : '#ef4444', border: '1px solid currentColor', padding: '0 4px', borderRadius: '4px' }}>
+                                                                    {ing.isVeg === 'Veg' ? 'Veg' : 'Non-Veg'}
+                                                                </span>
+                                                                {ing.needsRefrigeration === 'Yes' && (
+                                                                    <span style={{ fontSize: '0.75rem', color: '#60A5FA', border: '1px solid currentColor', padding: '0 4px', borderRadius: '4px' }}>❄️ Fridge</span>
+                                                                )}
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                )}
+                                                <p style={{ color: 'var(--text-muted)', fontSize: '0.8rem', marginTop: '0.25rem' }}>{new Date(donation.createdAt).toLocaleDateString()}</p>
+                                            </div>
+                                        </td>
                                         <td style={{ padding: '1rem' }}>
                                             <span style={{
                                                 padding: '0.25rem 0.75rem',
-                                                borderRadius: '1rem',
-                                                fontSize: '0.875rem',
-                                                background: donation.status === 'available' ? 'rgba(16, 185, 129, 0.2)' : 'rgba(239, 68, 68, 0.2)',
-                                                color: donation.status === 'available' ? '#10b981' : '#ef4444'
+                                                borderRadius: '999px',
+                                                fontSize: '0.8rem',
+                                                background: donation.status === 'available' || donation.status === 'approved' ? 'rgba(16, 185, 129, 0.2)' :
+                                                    donation.status === 'rejected' ? 'rgba(239, 68, 68, 0.2)' : 'rgba(245, 158, 11, 0.2)',
+                                                color: donation.status === 'available' || donation.status === 'approved' ? '#10B981' :
+                                                    donation.status === 'rejected' ? '#EF4444' : '#F59E0B'
                                             }}>
                                                 {donation.status.charAt(0).toUpperCase() + donation.status.slice(1)}
                                             </span>

@@ -34,6 +34,8 @@ const Login = () => {
                     navigate('/donor-dashboard');
                 } else if (data.role === 'ngo') {
                     navigate('/ngo-dashboard');
+                } else if (data.role === 'admin') {
+                    navigate('/admin-dashboard');
                 } else {
                     navigate('/');
                 }

@@ -76,9 +76,32 @@ const NGODashboard = () => {
                                 </span>
                             </div>
 
+                            <div className="mb-3">
+                                <h4 className="text-sm text-gray-400 mb-2">Items:</h4>
+                                <ul style={{ paddingLeft: '0', color: 'var(--text-muted)', fontSize: '0.9rem' }}>
+                                    {food.ingredients && food.ingredients.map((ing, i) => (
+                                        <li key={i} className="glass-panel" style={{ padding: '0.5rem', marginBottom: '0.5rem', background: 'rgba(255,255,255,0.03)' }}>
+                                            <div className="flex justify-between items-center mb-1">
+                                                <span className="font-bold text-white">{ing.name}</span>
+                                                <span>{ing.quantity}</span>
+                                            </div>
+                                            <div className="flex gap-2">
+                                                <span style={{ fontSize: '0.75rem', color: ing.isVeg === 'Veg' ? '#10b981' : '#ef4444' }}>
+                                                    {ing.isVeg === 'Veg' ? '🟢 Veg' : '🔴 Non-Veg'}
+                                                </span>
+                                                {ing.needsRefrigeration === 'Yes' && (
+                                                    <span style={{ fontSize: '0.75rem', color: '#60A5FA' }}>❄️ Needs Fridge</span>
+                                                )}
+                                            </div>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+
                             <div style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>
-                                <p><strong>Quantity:</strong> {food.quantity}</p>
-                                <p><strong>Location:</strong> {food.location}</p>
+
+
+                                <p className="mb-2" style={{ color: 'var(--text-muted)' }}><strong>Location:</strong> {food.location}</p>
                                 <p><strong>Posted by:</strong> {food.postedBy}</p>
                                 <p style={{ marginTop: '0.5rem' }}>{food.description}</p>
                             </div>
