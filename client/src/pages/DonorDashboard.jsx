@@ -125,11 +125,11 @@ const DonorDashboard = () => {
                                                 borderRadius: '999px',
                                                 fontSize: '0.8rem',
                                                 background: donation.status === 'available' || donation.status === 'approved' ? 'rgba(16, 185, 129, 0.2)' :
-                                                    donation.status === 'rejected' ? 'rgba(239, 68, 68, 0.2)' : 'rgba(245, 158, 11, 0.2)',
-                                                color: donation.status === 'available' || donation.status === 'approved' ? '#10B981' :
-                                                    donation.status === 'rejected' ? '#EF4444' : '#F59E0B'
+                                                    donation.status === 'rejected' ? 'rgba(239, 68, 68, 0.2)' : 'rgba(16, 185, 129, 0.2)',
+                                                color: donation.status === 'pending' ? '#F59E0B' :
+                                                    donation.status === 'rejected' ? '#EF4444' : '#10B981'
                                             }}>
-                                                {donation.status === 'available' ? 'Approved' : donation.status.charAt(0).toUpperCase() + donation.status.slice(1)}
+                                                {donation.status.charAt(0).toUpperCase() + donation.status.slice(1)}
                                             </span>
                                         </td>
                                     </tr>

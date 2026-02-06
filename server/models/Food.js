@@ -11,7 +11,7 @@ const FoodSchema = new mongoose.Schema({
     location: String,
     description: String,
     postedBy: String, // Username or ID from SQL
-    status: { type: String, enum: ['pending', 'available', 'claimed', 'approved', 'rejected'], default: 'pending' },
+    status: { type: String, enum: ['pending', 'available', 'claimed', 'approved', 'rejected'], default: 'available' },
     createdAt: { type: Date, default: Date.now }
 });
 
