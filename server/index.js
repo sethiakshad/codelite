@@ -7,28 +7,22 @@ const User = require('./models/User');
 const Food = require('./models/Food');
 
 const app = express();
-app.use(cors());
+app.use(cors({
+    origin: 'https://aaharbandu-9necpqmpn-sethiakshads-projects.vercel.app',
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true
+}));
 app.use(express.json());
 
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 
-// Ensure uploads directory exists
-const uploadDir = path.join(__dirname, 'uploads');
-if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir);
-}
-
-// Multer Config
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, 'uploads/');
-    },
-    filename: (req, file, cb) => {
-        cb(null, Date.now() + '-' + file.originalname);
-    }
-});
+// Note: Disk storage won't work on Vercel's read-only filesystem.
+// For production, use Cloudinary or Vercel Blob. 
+// Switching to memory storage for now to prevent crashes.
+const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
 // Serve static files
@@ -46,7 +40,9 @@ app.post('/api/register', upload.single('certificate'), async (req, res) => {
         const { username, password, role } = req.body;
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        const certificatePath = req.file ? req.file.path : null;
+        // Since we switched to memoryStorage for Vercel, req.file.path is undefined.
+        // We'll store a placeholder string for now.
+        const certificatePath = req.file ? `memory://${req.file.originalname}` : null;
 
         if (!req.file && role !== 'admin') {
             return res.status(400).json({ error: 'Certificate/ID upload is required for donors and NGOs' });
