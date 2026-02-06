@@ -26,8 +26,7 @@ connectMongo();
 app.use((req, res, next) => {
     console.log(`${req.method} ${req.url}`);
     // Ensure DB is connected before proceeding
-    if (mongoose.conn+
-        ection.readyState !== 1) {
+    if (mongoose.connection.readyState !== 1) {
         console.log('DB not connected, attempting to reconnect...');
         connectMongo().then(() => next()).catch(err => {
             console.error('Reconnection failed:', err);
