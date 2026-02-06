@@ -7,13 +7,18 @@ const User = require('./models/User');
 const Food = require('./models/Food');
 
 const app = express();
+// Allow all origins temporarily to fix the Network Error
 app.use(cors({
-    origin: 'https://aaharbandu-9necpqmpn-sethiakshads-projects.vercel.app',
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
+    origin: true,
     credentials: true
 }));
 app.use(express.json());
+
+// Log all incoming requests for debugging in Vercel Logs
+app.use((req, res, next) => {
+    console.log(`${req.method} ${req.url}`);
+    next();
+});
 
 const multer = require('multer');
 const path = require('path');
