@@ -144,6 +144,33 @@ app.get('/api/admin/users/pending', async (req, res) => {
     }
 });
 
+// ADMIN: Get all users (for management)
+app.get('/api/admin/users', async (req, res) => {
+    try {
+        const users = await User.findAll({
+            attributes: ['id', 'username', 'role', 'certificate', 'approvalStatus', 'createdAt']
+        });
+        res.json(users);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// ADMIN: Delete a user
+app.delete('/api/admin/users/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const user = await User.findByPk(id);
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+        await user.destroy();
+        res.json({ message: 'User deleted successfully' });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 // ADMIN: Approve or reject user
 app.put('/api/admin/users/:id/:status', async (req, res) => {
     try {
