@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import API_URL from '../config/api';
 
 const Donate = () => {
     const navigate = useNavigate();
@@ -43,7 +44,7 @@ const Donate = () => {
         };
 
         try {
-            const response = await fetch('http://127.0.0.1:5000/api/food', {
+            const response = await fetch(`${API_URL}/api/food`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

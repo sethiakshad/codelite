@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import API_URL from '../config/api';
 
 const AdminDashboard = () => {
     const { user } = useAuth();
@@ -20,7 +21,7 @@ const AdminDashboard = () => {
 
     const fetchPendingUsers = async () => {
         try {
-            const response = await fetch('http://127.0.0.1:5000/api/admin/users/pending');
+            const response = await fetch(`${API_URL}/api/admin/users/pending`);
             if (response.ok) {
                 const data = await response.json();
                 setPendingUsers(data);
@@ -32,7 +33,7 @@ const AdminDashboard = () => {
 
     const fetchPendingFood = async () => {
         try {
-            const response = await fetch('http://127.0.0.1:5000/api/admin/food/pending');
+            const response = await fetch(`${API_URL}/api/admin/food/pending`);
             if (response.ok) {
                 const data = await response.json();
                 setPendingFood(data);
@@ -44,7 +45,7 @@ const AdminDashboard = () => {
 
     const handleUserAction = async (id, status) => {
         try {
-            const response = await fetch(`http://127.0.0.1:5000/api/admin/users/${id}/${status}`, {
+            const response = await fetch(`${API_URL}/api/admin/users/${id}/${status}`, {
                 method: 'PUT'
             });
             if (response.ok) {
@@ -59,7 +60,7 @@ const AdminDashboard = () => {
     const handleFoodAction = async (id, status) => {
         try {
             // status should be 'available' (approve) or 'rejected'
-            const response = await fetch(`http://127.0.0.1:5000/api/admin/food/${id}/${status}`, {
+            const response = await fetch(`${API_URL}/api/admin/food/${id}/${status}`, {
                 method: 'PUT'
             });
             if (response.ok) {
@@ -125,7 +126,7 @@ const AdminDashboard = () => {
                                         {pendingUser.certificate && (
                                             <div className="mb-3">
                                                 <a
-                                                    href={`http://127.0.0.1:5000/${pendingUser.certificate}`}
+                                                    href={`${API_URL}/${pendingUser.certificate}`}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
                                                     className="btn btn-secondary text-sm"

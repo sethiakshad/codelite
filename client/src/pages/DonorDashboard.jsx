@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import API_URL from '../config/api';
 
 const DonorDashboard = () => {
     const navigate = useNavigate();
@@ -22,7 +23,7 @@ const DonorDashboard = () => {
 
     const fetchDonations = async (user) => {
         try {
-            const response = await fetch(`http://127.0.0.1:5000/api/food/user/${user}`);
+            const response = await fetch(`${API_URL}/api/food/user/${user}`);
             if (response.ok) {
                 const data = await response.json();
                 setDonations(data);

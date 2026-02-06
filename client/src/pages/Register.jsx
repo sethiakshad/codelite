@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import API_URL from '../config/api';
 
 const Register = () => {
     const location = useLocation();
@@ -49,7 +50,7 @@ const Register = () => {
                 submitData.append('certificate', file);
             }
 
-            const response = await fetch('http://127.0.0.1:5000/api/register', {
+            const response = await fetch(`${API_URL}/api/register`, {
                 method: 'POST',
                 body: submitData,
             });
