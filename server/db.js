@@ -4,11 +4,20 @@ const path = require('path');
 // Mongo Connection
 const connectMongo = async () => {
     try {
-        const mongoURI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/foodlink';
-        await mongoose.connect(mongoURI);
-        console.log('MongoDB Connected');
+        const mongoURI = process.env.MONGODB_URI;
+        if (!mongoURI) {
+            console.error('CRITICAL: MONGODB_URI is not defined in environment variables!');
+            return;
+        }
+
+        console.log('Attempting to connect to MongoDB...');
+        await mongoose.connect(mongoURI, {
+            serverSelectionTimeoutMS: 5000 // 5 second timeout
+        });
+        console.log('MongoDB Connected Successfully');
     } catch (err) {
-        console.log('MongoDB Connection Error. If deployed, check MONGODB_URI env var:', err.message);
+        console.error('MongoDB Connection Error:', err.message);
+        throw err; // Rethrow to let the caller handle it
     }
 };
 

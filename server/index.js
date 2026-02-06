@@ -20,18 +20,25 @@ const path = require('path');
 const fs = require('fs');
 
 // Connect to MongoDB immediately
-connectMongo();
+connectMongo().catch(err => console.error('Initial DB connection failed:', err.message));
 
 // Log all incoming requests for debugging in Vercel Logs
-app.use((req, res, next) => {
+app.use(async (req, res, next) => {
     console.log(`${req.method} ${req.url}`);
-    // Ensure DB is connected before proceeding
+
+    // Check if the request is for the health check or root, allow those through
+    if (req.url === '/' || req.url === '/api/health') return next();
+
+    // Ensure DB is connected before proceeding with API calls
     if (mongoose.connection.readyState !== 1) {
-        console.log('DB not connected, attempting to reconnect...');
-        connectMongo().then(() => next()).catch(err => {
-            console.error('Reconnection failed:', err);
-            res.status(500).json({ error: 'Database connection failed' });
-        });
+        console.log('DB disconnected, attempting to connect...');
+        try {
+            await connectMongo();
+            next();
+        } catch (err) {
+            console.error('Middleware DB connection failed:', err.message);
+            return res.status(503).json({ error: 'Database is currently unavailable. Please check your MONGODB_URI and Network Access settings.' });
+        }
     } else {
         next();
     }
