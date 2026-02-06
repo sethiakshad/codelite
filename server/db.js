@@ -5,19 +5,19 @@ const path = require('path');
 // Mongo Connection
 const connectMongo = async () => {
     try {
-        // Assuming local mongo or use connection string from env
-        // Using a generic local URI. If user doesn't have mongo running, this will fail but catch block catches it.
-        await mongoose.connect('mongodb://127.0.0.1:27017/foodlink');
+        const mongoURI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/foodlink';
+        await mongoose.connect(mongoURI);
         console.log('MongoDB Connected');
     } catch (err) {
-        console.log('MongoDB Connection Error (Ensure MongoDB is running):', err.message);
+        console.log('MongoDB Connection Error:', err.message);
     }
 };
 
 // SQL Connection (SQLite)
+const sqlitePath = process.env.SQLITE_PATH || path.join(__dirname, 'database.sqlite');
 const sequelize = new Sequelize({
     dialect: 'sqlite',
-    storage: path.join(__dirname, 'database.sqlite'), // Store in server dir
+    storage: sqlitePath,
     logging: false
 });
 

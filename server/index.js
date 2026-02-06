@@ -223,15 +223,26 @@ app.post('/api/food', async (req, res) => {
     }
 });
 
-const PORT = 5000;
-app.listen(PORT, async () => {
-    console.log(`Server running on port ${PORT}`);
+const PORT = process.env.PORT || 5000;
 
-    // Connect to Databases
-    await connectMongo();
-    await connectSQL();
+// Export app for Vercel
+module.exports = app;
 
-    // Sync SQL models
-    await sequelize.sync({ alter: true });
-    console.log('SQL Database synced');
-});
+// Only listen if not in a serverless environment
+if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {
+    app.listen(PORT, async () => {
+        console.log(`Server running on port ${PORT}`);
+
+        // Connect to Databases
+        try {
+            await connectMongo();
+            await connectSQL();
+
+            // Sync SQL models
+            await sequelize.sync({ alter: true });
+            console.log('SQL Database synced');
+        } catch (error) {
+            console.error('Initial DB connection failed:', error);
+        }
+    });
+}
