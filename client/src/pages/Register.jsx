@@ -14,6 +14,7 @@ const Register = () => {
         password: '',
         role: initialRole
     });
+    const [file, setFile] = useState(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     useEffect(() => {
@@ -24,14 +25,25 @@ const Register = () => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
+    const handleFileChange = (e) => {
+        setFile(e.target.files[0]);
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsSubmitting(true);
         try {
+            const submitData = new FormData();
+            submitData.append('username', formData.username);
+            submitData.append('password', formData.password);
+            submitData.append('role', formData.role);
+            if (file) {
+                submitData.append('certificate', file);
+            }
+
             const response = await fetch('http://127.0.0.1:5000/api/register', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(formData),
+                body: submitData,
             });
             const data = await response.json();
             if (response.ok) {
@@ -109,6 +121,7 @@ const Register = () => {
                             required
                         />
                     </div>
+
                     <div>
                         <label style={{ color: 'var(--text-muted)', marginBottom: '0.5rem', display: 'block' }}>Password</label>
                         <input
@@ -127,6 +140,24 @@ const Register = () => {
                             required
                         />
                     </div>
+                    <div>
+                        <label style={{ color: 'var(--text-muted)', marginBottom: '0.5rem', display: 'block' }}>
+                            {formData.role === 'ngo' ? 'Upload NGO Certificate' : 'Upload License/ID'}
+                        </label>
+                        <input
+                            type="file"
+                            onChange={handleFileChange}
+                            required
+                            style={{
+                                width: '100%',
+                                padding: '0.75rem',
+                                borderRadius: '0.5rem',
+                                border: '1px solid var(--glass-border)',
+                                background: 'rgba(255,255,255,0.05)',
+                                color: 'white'
+                            }}
+                        />
+                    </div>
                     <button type="submit" className="btn btn-primary w-full" style={{ marginTop: '1rem' }} disabled={isSubmitting}>
                         {isSubmitting ? 'Registering...' : 'Register'}
                     </button>
@@ -134,8 +165,8 @@ const Register = () => {
                 <p className="text-center" style={{ marginTop: '1.5rem', color: 'var(--text-muted)' }}>
                     Already have an account? <Link to="/login" style={{ color: 'var(--primary)' }}>Log In</Link>
                 </p>
-            </div>
-        </div>
+            </div >
+        </div >
     );
 };
 

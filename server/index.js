@@ -10,6 +10,30 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
+
+// Ensure uploads directory exists
+const uploadDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir);
+}
+
+// Multer Config
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'uploads/');
+    },
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + '-' + file.originalname);
+    }
+});
+const upload = multer({ storage });
+
+// Serve static files
+app.use('/uploads', express.static('uploads'));
+
 const SECRET_KEY = 'supersecretkey'; // In real app use .env
 
 app.get('/', (req, res) => {
@@ -17,11 +41,23 @@ app.get('/', (req, res) => {
 });
 
 // --- AUTH (SQL) ---
-app.post('/api/register', async (req, res) => {
+app.post('/api/register', upload.single('certificate'), async (req, res) => {
     try {
         const { username, password, role } = req.body;
         const hashedPassword = await bcrypt.hash(password, 10);
-        const user = await User.create({ username, password: hashedPassword, role });
+
+        const certificatePath = req.file ? req.file.path : null;
+
+        if (!certificatePath) {
+            return res.status(400).json({ error: 'Certificate/ID upload is required' });
+        }
+
+        const user = await User.create({
+            username,
+            password: hashedPassword,
+            role,
+            certificate: certificatePath
+        });
 
         const token = jwt.sign({ id: user.id, username: user.username, role: user.role }, SECRET_KEY);
         res.status(201).json({
@@ -91,6 +127,6 @@ app.listen(PORT, async () => {
     await connectSQL();
 
     // Sync SQL models
-    await sequelize.sync();
+    await sequelize.sync({ alter: true });
     console.log('SQL Database synced');
 });

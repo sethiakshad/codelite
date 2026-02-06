@@ -14,6 +14,10 @@ const User = sequelize.define('User', {
     role: {
         type: DataTypes.ENUM('donor', 'ngo', 'admin'),
         defaultValue: 'donor'
+    },
+    certificate: {
+        type: DataTypes.STRING,
+        allowNull: true
     }
 });
 
