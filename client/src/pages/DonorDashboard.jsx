@@ -90,9 +90,6 @@ const DonorDashboard = () => {
                         <table style={{ width: '100%', borderCollapse: 'collapse', color: 'white' }}>
                             <thead>
                                 <tr style={{ borderBottom: '1px solid var(--glass-border)' }}>
-                                    <th style={{ textAlign: 'left', padding: '1rem' }}>Title</th>
-                                    <th style={{ textAlign: 'left', padding: '1rem' }}>Quantity</th>
-                                    <th style={{ textAlign: 'left', padding: '1rem' }}>Date</th>
                                     <th style={{ textAlign: 'left', padding: '1rem' }}>Donation Details</th>
                                     <th style={{ textAlign: 'left', padding: '1rem' }}>Status</th>
                                 </tr>
@@ -132,7 +129,7 @@ const DonorDashboard = () => {
                                                 color: donation.status === 'available' || donation.status === 'approved' ? '#10B981' :
                                                     donation.status === 'rejected' ? '#EF4444' : '#F59E0B'
                                             }}>
-                                                {donation.status.charAt(0).toUpperCase() + donation.status.slice(1)}
+                                                {donation.status === 'available' ? 'Approved' : donation.status.charAt(0).toUpperCase() + donation.status.slice(1)}
                                             </span>
                                         </td>
                                     </tr>

@@ -12,7 +12,8 @@ const Register = () => {
     const [formData, setFormData] = useState({
         username: '',
         password: '',
-        role: initialRole
+        role: initialRole,
+        secretCode: ''
     });
     const [file, setFile] = useState(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -31,6 +32,13 @@ const Register = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        // Simple client-side validation for admin secret
+        if (formData.role === 'admin' && formData.secretCode !== 'admin123') {
+            alert('Invalid Admin Secret Code!');
+            return;
+        }
+
         setIsSubmitting(true);
         try {
             const submitData = new FormData();
@@ -60,6 +68,8 @@ const Register = () => {
                     navigate('/donor-dashboard');
                 } else if (data.role === 'ngo') {
                     navigate('/ngo-dashboard');
+                } else if (data.role === 'admin') {
+                    navigate('/admin-dashboard');
                 } else {
                     navigate('/');
                 }
@@ -101,8 +111,32 @@ const Register = () => {
                         >
                             <option value="donor">Donor (Institution/Event)</option>
                             <option value="ngo">NGO / Volunteer</option>
+                            <option value="admin">Admin</option>
                         </select>
                     </div>
+
+                    {formData.role === 'admin' && (
+                        <div>
+                            <label style={{ color: 'var(--text-muted)', marginBottom: '0.5rem', display: 'block' }}>Admin Secret Code</label>
+                            <input
+                                type="password"
+                                name="secretCode"
+                                value={formData.secretCode}
+                                onChange={handleChange}
+                                placeholder="Enter secret code"
+                                style={{
+                                    width: '100%',
+                                    padding: '0.75rem',
+                                    borderRadius: '0.5rem',
+                                    border: '1px solid var(--primary)',
+                                    background: 'rgba(255,255,255,0.05)',
+                                    color: 'white'
+                                }}
+                                required
+                            />
+                        </div>
+                    )}
+
                     <div>
                         <label style={{ color: 'var(--text-muted)', marginBottom: '0.5rem', display: 'block' }}>Username</label>
                         <input
@@ -140,24 +174,26 @@ const Register = () => {
                             required
                         />
                     </div>
-                    <div>
-                        <label style={{ color: 'var(--text-muted)', marginBottom: '0.5rem', display: 'block' }}>
-                            {formData.role === 'ngo' ? 'Upload NGO Certificate' : 'Upload License/ID'}
-                        </label>
-                        <input
-                            type="file"
-                            onChange={handleFileChange}
-                            required
-                            style={{
-                                width: '100%',
-                                padding: '0.75rem',
-                                borderRadius: '0.5rem',
-                                border: '1px solid var(--glass-border)',
-                                background: 'rgba(255,255,255,0.05)',
-                                color: 'white'
-                            }}
-                        />
-                    </div>
+                    {formData.role !== 'admin' && (
+                        <div>
+                            <label style={{ color: 'var(--text-muted)', marginBottom: '0.5rem', display: 'block' }}>
+                                {formData.role === 'ngo' ? 'Upload NGO Certificate' : 'Upload License/ID'}
+                            </label>
+                            <input
+                                type="file"
+                                onChange={handleFileChange}
+                                required
+                                style={{
+                                    width: '100%',
+                                    padding: '0.75rem',
+                                    borderRadius: '0.5rem',
+                                    border: '1px solid var(--glass-border)',
+                                    background: 'rgba(255,255,255,0.05)',
+                                    color: 'white'
+                                }}
+                            />
+                        </div>
+                    )}
                     <button type="submit" className="btn btn-primary w-full" style={{ marginTop: '1rem' }} disabled={isSubmitting}>
                         {isSubmitting ? 'Registering...' : 'Register'}
                     </button>

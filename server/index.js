@@ -48,8 +48,8 @@ app.post('/api/register', upload.single('certificate'), async (req, res) => {
 
         const certificatePath = req.file ? req.file.path : null;
 
-        if (!certificatePath) {
-            return res.status(400).json({ error: 'Certificate/ID upload is required' });
+        if (!req.file && role !== 'admin') {
+            return res.status(400).json({ error: 'Certificate/ID upload is required for donors and NGOs' });
         }
 
         const user = await User.create({
