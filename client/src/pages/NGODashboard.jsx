@@ -101,7 +101,9 @@ const NGODashboard = () => {
                             <div style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>
 
 
-                                <p className="mb-2" style={{ color: 'var(--text-muted)' }}><strong>Location:</strong> {food.location}</p>
+                                <p className="mb-2" style={{ color: 'var(--text-muted)' }}>
+                                    <strong>Location:</strong> {food.location}
+                                </p>
                                 <p><strong>Posted by:</strong> {food.postedBy}</p>
                                 <p style={{ marginTop: '0.5rem' }}>{food.description}</p>
                             </div>

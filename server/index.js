@@ -52,20 +52,35 @@ app.post('/api/register', upload.single('certificate'), async (req, res) => {
             return res.status(400).json({ error: 'Certificate/ID upload is required for donors and NGOs' });
         }
 
+        // Set approval status: admin is auto-approved, donors and NGOs need approval
+        const approvalStatus = role === 'admin' ? 'approved' : 'pending';
+
         const user = await User.create({
             username,
             password: hashedPassword,
             role,
-            certificate: certificatePath
+            certificate: certificatePath,
+            approvalStatus
         });
 
-        const token = jwt.sign({ id: user.id, username: user.username, role: user.role }, SECRET_KEY);
-        res.status(201).json({
-            message: 'User created successfully',
-            token,
-            username: user.username,
-            role: user.role
-        });
+        const token = jwt.sign({ id: user.id, username: user.username, role: user.role, approvalStatus: user.approvalStatus }, SECRET_KEY);
+
+        if (role === 'admin') {
+            res.status(201).json({
+                message: 'User created successfully',
+                token,
+                username: user.username,
+                role: user.role,
+                approvalStatus: user.approvalStatus
+            });
+        } else {
+            res.status(201).json({
+                message: 'Registration submitted! Your profile is pending admin approval.',
+                username: user.username,
+                role: user.role,
+                approvalStatus: user.approvalStatus
+            });
+        }
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
@@ -78,8 +93,17 @@ app.post('/api/login', async (req, res) => {
         if (!user || !(await bcrypt.compare(password, user.password))) {
             return res.status(401).json({ error: 'Invalid credentials' });
         }
-        const token = jwt.sign({ id: user.id, username: user.username, role: user.role }, SECRET_KEY);
-        res.json({ token, username: user.username, role: user.role });
+
+        // Check if user is approved (except admin)
+        if (user.approvalStatus === 'pending') {
+            return res.status(403).json({ error: 'Your account is pending admin approval. Please wait for approval.' });
+        }
+        if (user.approvalStatus === 'rejected') {
+            return res.status(403).json({ error: 'Your account has been rejected by admin. Please contact support.' });
+        }
+
+        const token = jwt.sign({ id: user.id, username: user.username, role: user.role, approvalStatus: user.approvalStatus }, SECRET_KEY);
+        res.json({ token, username: user.username, role: user.role, approvalStatus: user.approvalStatus });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
@@ -107,6 +131,38 @@ app.get('/api/food/user/:username', async (req, res) => {
     }
 });
 
+// ADMIN: Get pending users (for approval)
+app.get('/api/admin/users/pending', async (req, res) => {
+    try {
+        const users = await User.findAll({
+            where: { approvalStatus: 'pending' },
+            attributes: ['id', 'username', 'role', 'certificate', 'approvalStatus', 'createdAt']
+        });
+        res.json(users);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// ADMIN: Approve or reject user
+app.put('/api/admin/users/:id/:status', async (req, res) => {
+    try {
+        const { id, status } = req.params;
+        if (!['approved', 'rejected'].includes(status)) {
+            return res.status(400).json({ error: 'Invalid status' });
+        }
+        const user = await User.findByPk(id);
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+        user.approvalStatus = status;
+        await user.save();
+        res.json({ message: `User ${status}`, user });
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+});
+
 // ADMIN: Get pending food
 app.get('/api/admin/food/pending', async (req, res) => {
     try {
@@ -131,7 +187,7 @@ app.put('/api/admin/food/:id/:status', async (req, res) => {
 app.post('/api/food', async (req, res) => {
     try {
         // In a real app, verify token middleware would go here
-        // Default status is pending from schema
+        // Default status is 'available' - food is directly posted without admin approval
         const food = new Food(req.body);
         await food.save();
         res.status(201).json(food);

@@ -18,6 +18,10 @@ const User = sequelize.define('User', {
     certificate: {
         type: DataTypes.STRING,
         allowNull: true
+    },
+    approvalStatus: {
+        type: DataTypes.ENUM('pending', 'approved', 'rejected'),
+        defaultValue: 'approved' // Admin is auto-approved, others set to pending in registration
     }
 });
 

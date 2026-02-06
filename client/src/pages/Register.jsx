@@ -55,23 +55,29 @@ const Register = () => {
             });
             const data = await response.json();
             if (response.ok) {
-                // Auto-login via Context
-                login({
-                    token: data.token,
-                    role: data.role,
-                    username: data.username
-                });
-
-                alert('Registration Successful!');
-
-                if (data.role === 'donor') {
-                    navigate('/donor-dashboard');
-                } else if (data.role === 'ngo') {
-                    navigate('/ngo-dashboard');
-                } else if (data.role === 'admin') {
-                    navigate('/admin-dashboard');
+                // Check approval status
+                if (data.approvalStatus === 'pending') {
+                    alert(data.message || 'Registration submitted! Your profile is pending admin approval. You will be able to login once approved.');
+                    navigate('/login');
                 } else {
-                    navigate('/');
+                    // Auto-login for approved users (admin)
+                    login({
+                        token: data.token,
+                        role: data.role,
+                        username: data.username
+                    });
+
+                    alert('Registration Successful!');
+
+                    if (data.role === 'donor') {
+                        navigate('/donor-dashboard');
+                    } else if (data.role === 'ngo') {
+                        navigate('/ngo-dashboard');
+                    } else if (data.role === 'admin') {
+                        navigate('/admin-dashboard');
+                    } else {
+                        navigate('/');
+                    }
                 }
             } else {
                 // Handle duplicate username or other errors

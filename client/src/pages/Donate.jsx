@@ -151,6 +151,7 @@ const Donate = () => {
                             type="text"
                             value={location}
                             onChange={(e) => setLocation(e.target.value)}
+                            placeholder="Enter pickup address (e.g., 123 Main Street, City)"
                             style={{ width: '100%', padding: '0.75rem', borderRadius: '0.5rem', border: '1px solid var(--glass-border)', background: 'rgba(255,255,255,0.05)', color: 'white' }}
                             required
                         />
