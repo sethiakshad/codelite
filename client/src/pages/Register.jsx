@@ -99,7 +99,7 @@ const Register = () => {
     return (
         <div className="container flex justify-center items-center" style={{ minHeight: '100vh', paddingTop: '80px' }}>
             <div className="glass-panel" style={{ padding: '3rem', width: '100%', maxWidth: '400px' }}>
-                <h2 className="section-title" style={{ fontSize: '2rem' }}>Join FoodLink</h2>
+                <h2 className="section-title" style={{ fontSize: '2rem' }}>Join Aaahar Bandhu</h2>
                 <form onSubmit={handleSubmit} className="flex flex-col gap-4">
                     <div>
                         <label style={{ color: 'var(--text-muted)', marginBottom: '0.5rem', display: 'block' }}>I am a...</label>

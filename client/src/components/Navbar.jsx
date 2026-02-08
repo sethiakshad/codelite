@@ -47,7 +47,7 @@ const Navbar = () => {
         >
             <div className="container flex justify-between items-center">
                 <Link to="/" style={{ fontSize: '1.5rem', fontWeight: 'bold', color: 'var(--primary)' }}>
-                    FoodLink<span style={{ color: 'white' }}>.</span>
+                    Aaahar Bandhu<span style={{ color: 'white' }}>.</span>
                 </Link>
 
                 <ul className="flex gap-8" style={{ display: 'flex' }}>

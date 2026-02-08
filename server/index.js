@@ -57,7 +57,7 @@ const SECRET_KEY = 'supersecretkey'; // In real app use .env
 
 app.get('/', (req, res) => {
     res.json({
-        message: 'FoodLink API Server is running!',
+        message: 'Aaahar Bandhu API Server is running!',
         dbStatus: mongoose.connection.readyState === 1 ? 'Connected' : 'Disconnected'
     });
 });

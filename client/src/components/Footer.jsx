@@ -7,7 +7,7 @@ const Footer = () => {
             <div className="container">
                 <div className="grid-3" style={{ marginBottom: '3rem' }}>
                     <div>
-                        <h3 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '1rem', color: 'var(--primary)' }}>FoodLink.</h3>
+                        <h3 style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '1rem', color: 'var(--primary)' }}>Aaahar Bandhu.</h3>
                         <p style={{ color: 'var(--text-muted)' }}>Helping institutions and events manage surplus food responsibly.</p>
                     </div>
 
@@ -26,7 +26,7 @@ const Footer = () => {
                     </div>
                 </div>
                 <div className="text-center" style={{ color: 'var(--text-muted)', fontSize: '0.9rem', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '2rem' }}>
-                    &copy; 2026 FoodLink. All rights reserved.
+                    &copy; 2026 Aaahar Bandhu. All rights reserved.
                 </div>
             </div>
         </footer>
